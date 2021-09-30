@@ -26,7 +26,7 @@ This assignment requires the following files from the previous assignments.
 
 ## Result
 
-![result_simple](result\result_simple.png)
+<img src= "result\result_simple.png" width="400px">
 
-![loss_simple](result\loss_simple.png)
+<img src="result/loss_simple.png" width=400px>
 
