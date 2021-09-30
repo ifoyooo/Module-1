@@ -197,7 +197,7 @@ class FunctionBase:
     def variable(raw, history):
         raise NotImplementedError()
 
-    @classmethod
+    @classmethod #注意此处为classmethod，不需要实例化，相当于把一组函数封装到一个类当中。
     def apply(cls, *vals):
         raw_vals = []
         need_grad = False
@@ -217,8 +217,8 @@ class FunctionBase:
         )
         back = None
         if need_grad:
-            back = History(cls, ctx, vals)
-        return cls.variable(cls.data(c), back)
+            back = History(cls, ctx, vals)#运算符、保留值和值
+        return cls.variable(cls.data(c), back)#新建varable。
 
     @classmethod
     def chain_rule(cls, ctx, inputs, d_output):
@@ -236,14 +236,21 @@ class FunctionBase:
 
         """
         # TODO: Implement for Task 1.3.
-        raise NotImplementedError('Need to implement for Task 1.3')
+        # raise NotImplementedError('Need to implement for Task 1.3')
+        ans=[]
+        grad_list=wrap_tuple(cls.backward(ctx,d_output))
+        for index in range(len(inputs)):
+            if not is_constant(inputs[index]):
+                ans.append((inputs[index],grad_list[index]))
+        return ans
+        #存疑
 
 
 def is_constant(val):
     return not isinstance(val, Variable) or val.history is None
 
 
-def topological_sort(variable):
+def topological_sort(variable): # DFS实现Topological Sort
     "Returns nodes in topological order"
     order = []
     seen = set()
@@ -276,4 +283,14 @@ def backpropagate(variable, deriv):
     No return. Should write to its results to the derivative values of each leaf.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    variable_queue=topological_sort(variable=variable)
+    v_d_dict=dict(zip(list(map(lambda x:x.name,variable_queue)),[0 for i in range(len(variable_queue))]))
+    v_d_dict[variable.name]=deriv
+    for variable in variable_queue:
+        if variable.is_leaf():#遍历到叶子节点之前由于拓扑排序，其梯度积累已经完成。
+            variable.accumulate_derivative(v_d_dict[variable.name])
+        else:
+            for father_variable,father_deriv in variable.history.backprop_step(v_d_dict[variable.name]):
+                v_d_dict[father_variable.name]+=father_deriv
+
+    # raise NotImplementedError('Need to implement for Task 1.4')
