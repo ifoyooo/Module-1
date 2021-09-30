@@ -5,12 +5,17 @@ Be sure you have minitorch installed in you Virtual Env.
 import minitorch
 import random
 
+from minitorch.module import Parameter
+
 
 class Network(minitorch.Module):
     def __init__(self, hidden_layers):
         super().__init__()
         # TODO: Implement for Task 1.5.
-        raise NotImplementedError('Need to implement for Task 1.5')
+        self.layer1=Linear(2,hidden_layers)
+        self.layer2=Linear(hidden_layers,hidden_layers)
+        self.layer3=Linear(hidden_layers,1)
+        # raise NotImplementedError('Need to implement for Task 1.5')
 
     def forward(self, x):
         middle = [h.relu() for h in self.layer1.forward(x)]
@@ -28,8 +33,8 @@ class Linear(minitorch.Module):
             for j in range(out_size):
                 self.weights[i].append(
                     self.add_parameter(
-                        f"weight_{i}_{j}", minitorch.Scalar(2 * (random.random() - 0.5))
-                    )
+                        f"weight_{i}_{j}", minitorch.Scalar(2 * (random.random() - 0.5))#[-1,1]
+                    )#注意paramter的value正是我们定义的Scalar
                 )
         for j in range(out_size):
             self.bias.append(
@@ -40,7 +45,15 @@ class Linear(minitorch.Module):
 
     def forward(self, inputs):
         # TODO: Implement for Task 1.5.
-        raise NotImplementedError('Need to implement for Task 1.5')
+        #注意这里我们可以直接定义python常数值，因为apply会将结果转为scalar。另外这里可以定义int，因为python的隐式转换会将其转为float。
+        ans=[]
+        for j in range(len(self.weights[0])):
+            tmp=0
+            for i in range(len(inputs)):
+                tmp+=self.weights[i][j].value*inputs[i]
+            ans.append(tmp)
+        return ans
+        # raise NotImplementedError('Need to implement for Task 1.5')
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
@@ -100,7 +113,7 @@ class ScalarTrain:
 
 if __name__ == "__main__":
     PTS = 50
-    HIDDEN = 2
+    HIDDEN = 10
     RATE = 0.5
     data = minitorch.datasets["Simple"](PTS)
     ScalarTrain(HIDDEN).train(data, RATE)

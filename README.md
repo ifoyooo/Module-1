@@ -9,3 +9,6 @@
 This assignment requires the following files from the previous assignments.
 
         minitorch/operators.py minitorch/module.py tests/test_module.py tests/test_operators.py project/run_manual.py
+
+> It seems that the bare minitorch (without numpy acceleration, etc.) implemented by ourselves is much slower and has poorer performance than the real pytorch.
+
