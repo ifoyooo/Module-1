@@ -12,3 +12,21 @@ This assignment requires the following files from the previous assignments.
 
 > It seems that the bare minitorch (without numpy acceleration, etc.) implemented by ourselves is much slower and has poorer performance than the real pytorch.
 
+## Progress
+
+- [x] task1_1
+
+- [x] task1_2
+
+- [x] task1_3
+
+- [x] task1_4
+
+- [x] task1_5
+
+## Result
+
+![result_simple](result\result_simple.png)
+
+![loss_simple](result\loss_simple.png)
+
